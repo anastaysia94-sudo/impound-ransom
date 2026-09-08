@@ -1,0 +1,42 @@
+name: Impound Ransom Web Quality
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "index.html"
+      - "guide.html"
+      - "js/**"
+      - "css/**"
+      - "robots.txt"
+      - "sitemap.xml"
+      - ".github/workflows/web-quality.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: JavaScript syntax
+        run: |
+          node --check js/data.js
+          node --check js/provenance.js
+          node --check js/app.js
+      - name: Trust and discovery contract
+        run: |
+          grep -q 'application/ld+json' index.html
+          grep -q 'js/provenance.js' index.html
+          grep -q 'Not a law firm' index.html
+          grep -q 'primary_source_checked' js/provenance.js
+          grep -q 'current_primary_source_review_required' js/provenance.js
+          test -f guide.html
+          test -f robots.txt
+          test -f sitemap.xml
