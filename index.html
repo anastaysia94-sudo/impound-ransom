@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0c0f" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Impound Ransom" />
+  <meta name="description" content="Your car is gone. Find the lot, the legal fee cap, and the script that says you will pay the lawful amount only." />
+  <title>Impound Ransom</title>
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" href="./icons/icon.svg" />
+  <link rel="apple-touch-icon" href="./icons/apple-touch.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:opsz,wght@9..144,560&family=Source+Serif+4:opsz,wght@8..60,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./css/app.css" />
+</head>
+<body>
+  <div class="app">
+    <section class="view on" id="view-home">
+      <div class="topbar">
+        <div class="brand"><div class="logo">IR</div> Impound Ransom</div>
+        <button class="ghost" id="go-pro">Pro</button>
+      </div>
+      <p class="kicker">The car is not stolen until you check</p>
+      <h1>Your car is just gone.</h1>
+      <p class="lede">City, plate, last parked block. We point at the lot, the fee cap in that state, the junk line items, and the sentence you say at the window.</p>
+      <div class="hero-card">
+        <div class="price"><span>Lookup</span><em>$19</em></div>
+        <p class="hint">Lot map · official search · cap memo · junk fees</p>
+        <div class="price" style="margin-top:10px"><span>Release pack</span><em>$79</em></div>
+        <p class="hint">Window script · pay-under-protest receipt language · chargeback letter</p>
+        <div class="stat-row">
+          <div class="stat"><b>Tonight</b><span>Get home</span></div>
+          <div class="stat"><b>Cap</b><span>Not the sticker</span></div>
+          <div class="stat"><b>Card</b><span>If they already ran it</span></div>
+        </div>
+      </div>
+      <div class="stack">
+        <button class="btn btn-amber" id="go-lookup">Find my car</button>
+        <button class="btn btn-outline" id="demo">Run the Chicago demo</button>
+      </div>
+      <p class="legal" style="margin-top:18px">Not a law firm. Not legal advice. Official city lookups stay free — we charge for the cap audit and the words at the window. <a href="#" id="go-legal">Terms & privacy</a></p>
+    </section>
+
+    <section class="view" id="view-lookup">
+      <button class="back" id="go-home">← Home</button>
+      <p class="kicker">Lookup</p>
+      <h1>Where did they take it?</h1>
+      <p class="lede">Private lots do not show up on city feeds. Give us the block anyway — that is how you know who to call.</p>
+      <div class="field">
+        <label for="city">City</label>
+        <input id="city" autocomplete="address-level2" placeholder="Chicago, LA, Houston…" />
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="plate">Plate</label>
+          <input id="plate" autocapitalize="characters" placeholder="ABC1234" />
+        </div>
+        <div class="field">
+          <label for="block">Last parked block</label>
+          <input id="block" placeholder="Wacker & Michigan" />
+        </div>
+      </div>
+      <button class="btn btn-amber" id="do-lookup">Search pounds</button>
+      <p class="hint">Chicago city tows can hit the live open-data list. Everywhere else we route you to the official search and the fee rules.</p>
+    </section>
+
+    <section class="view" id="view-search">
+      <div class="searching">
+        <div class="pulse"></div>
+        <p class="kicker">Working</p>
+        <h1>Checking lots</h1>
+        <p class="lede" id="search-copy">Pounds, contractors, private-property signs.</p>
+      </div>
+    </section>
+
+    <section class="view" id="view-result">
+      <button class="back" id="go-home-2">← Home</button>
+      <p class="kicker" id="res-kicker">City</p>
+      <h1 id="res-plate">PLATE</h1>
+      <p class="lede">Last seen: <span id="res-block">—</span></p>
+      <div id="res-status"></div>
+      <div class="card" style="margin-top:14px">
+        <h3 class="lot-name" id="res-lot-title">Lot</h3>
+        <div id="res-lot-body"></div>
+      </div>
+      <div class="stack" id="res-phones"></div>
+      <div class="stack" id="res-links" style="margin-top:10px"></div>
+
+      <div class="card unlock" id="paywall-lookup" style="margin-top:16px">
+        <div class="price"><span>Unlock this plate</span><em>$19</em></div>
+        <p>Fee cap for this state, junk line items, what to bring, and the pound directory kept on one screen while you stand at the window.</p>
+        <button class="btn btn-amber" id="buy-19" style="margin-top:12px">Pay $19</button>
+      </div>
+
+      <div id="unlocked-lookup">
+        <div class="stack" style="margin-top:12px">
+          <button class="btn btn-paper" id="open-fees">Fee cap & junk items</button>
+          <button class="btn btn-amber" id="open-pack">Release pack — $79</button>
+        </div>
+        <div class="card">
+          <h3>Bring this</h3>
+          <ul id="bring-list"></ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-fees">
+      <button class="back" id="back-result">← Result</button>
+      <p class="kicker">Lawful amount</p>
+      <h1>The sticker is not the law.</h1>
+      <div class="card">
+        <h3 id="cap-type">Cap</h3>
+        <p id="cap-tow"></p>
+        <p id="cap-storage" style="margin-top:8px"></p>
+        <p class="hint" id="cap-hint"></p>
+      </div>
+      <div class="card">
+        <h3>Line items that are often junk</h3>
+        <div id="junk-list"></div>
+      </div>
+      <p class="legal">Rates change. Photograph the posted card. Pay the undisputed amount under protest if storage is running.</p>
+    </section>
+
+    <section class="view" id="view-pack">
+      <button class="back" id="back-result-2">← Result</button>
+      <p class="kicker">Release pack</p>
+      <h1>Say this. Then pay only that.</h1>
+
+      <div class="card unlock" id="paywall-pack">
+        <div class="price"><span>Window script + chargeback</span><em>$79</em></div>
+        <p>The paragraph for the cashier, the list of things they cannot hold hostage, and the letter your card issuer actually reads.</p>
+        <button class="btn btn-amber" id="buy-79" style="margin-top:12px">Pay $79</button>
+      </div>
+
+      <div id="unlocked-pack">
+        <div class="toolbar">
+          <button class="btn btn-paper" id="copy-script">Copy script</button>
+          <button class="btn btn-outline" id="share-script">Share</button>
+        </div>
+        <div class="script" id="script-box"></div>
+        <div class="card" style="margin-top:14px">
+          <h3>They generally cannot sell or ransom</h3>
+          <ul id="cannot-sell"></ul>
+        </div>
+        <div class="card">
+          <h3>Statutes to name on the receipt</h3>
+          <ul id="statutes"></ul>
+        </div>
+        <h3 style="margin:16px 0 8px">If they already ran the card</h3>
+        <div class="toolbar">
+          <button class="btn btn-paper" id="copy-cb">Copy dispute letter</button>
+        </div>
+        <div class="script" id="cb-box"></div>
+        <div class="card">
+          <h3>Tonight, in order</h3>
+          <div class="checklist">
+            <label><input type="checkbox" /> Photograph the posted rate card and the invoice</label>
+            <label><input type="checkbox" /> Write “paid under protest” on the receipt</label>
+            <label><input type="checkbox" /> Get IDs / meds out even if you fight the total</label>
+            <label><input type="checkbox" /> Drive off — storage is the meter</label>
+            <label><input type="checkbox" /> File the card dispute within the issuer window</label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-checkout">
+      <button class="back" id="ck-cancel">← Cancel</button>
+      <p class="kicker">Checkout</p>
+      <h1 id="ck-title">Pay</h1>
+      <p class="lede" id="ck-body"></p>
+      <div class="card">
+        <div class="price"><span>Due now</span><em id="ck-amt">$19.00</em></div>
+        <p class="hint">Demo checkout — wire Stripe or Apple/Google Pay before store review. Nothing is charged on this build.</p>
+      </div>
+      <div class="field">
+        <label>Card on file (demo)</label>
+        <input value="4242 4242 4242 4242" readonly />
+      </div>
+      <button class="btn btn-amber" id="ck-pay">Unlock</button>
+    </section>
+
+    <section class="view" id="view-pro">
+      <button class="back" onclick="document.getElementById('view-home').classList.add('on');document.getElementById('view-pro').classList.remove('on')">← Home</button>
+      <p class="kicker">Parking lawyers & clinics</p>
+      <h1>A pro seat.</h1>
+      <p class="lede">White-label the cap tables, scripts, and chargeback pack. Your letterhead. Their shaking voice.</p>
+      <div class="card">
+        <div class="price"><span>Firm seat / month</span><em>$179</em></div>
+        <p>Unlimited packs · CSV of your matters · co-branded PDF</p>
+      </div>
+      <a class="btn btn-paper" href="mailto:pro@impoundransom.app?subject=Pro%20seat">Ask for a seat</a>
+    </section>
+
+    <section class="view" id="view-legal">
+      <button class="back" onclick="document.getElementById('view-home').classList.add('on');document.getElementById('view-legal').classList.remove('on')">← Home</button>
+      <p class="kicker">Fine print</p>
+      <h1>Read this once.</h1>
+      <div class="card">
+        <h3>Not legal advice</h3>
+        <p>Impound Ransom is a research and document-assembly tool. Tow, storage, and consumer rules change by city and week. Confirm the posted rate card and the current statute before you rely on a number.</p>
+      </div>
+      <div class="card">
+        <h3>Privacy</h3>
+        <p>Plate, city, and block stay on this device unless you later connect a paid backend. Chicago lookups hit the City of Chicago open-data portal. We do not need your name to run a search.</p>
+      </div>
+      <div class="card">
+        <h3>Payments</h3>
+        <p>This build uses a local demo checkout. Production billing will run through Stripe or store IAP. Unlock codes are stored in localStorage on this device.</p>
+      </div>
+      <p class="legal">© Impound Ransom. Official city find-my-car pages remain free. Use them.</p>
+    </section>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script src="./js/data.js"></script>
+  <script src="./js/app.js"></script>
+</body>
+</html>

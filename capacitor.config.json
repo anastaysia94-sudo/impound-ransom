@@ -1,0 +1,17 @@
+{
+  "appId": "app.impoundransom.mobile",
+  "appName": "Impound Ransom",
+  "webDir": ".",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0
+    },
+    "StatusBar": {
+      "style": "DARK"
+    }
+  }
+}
