@@ -1,0 +1,59 @@
+name: Build Impound Ransom Android Wrapper
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [ main ]
+    paths:
+      - 'package.json'
+      - 'capacitor.config.json'
+      - '.github/workflows/android-wrapper.yml'
+
+jobs:
+  generate-android:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: package-lock.json
+        continue-on-error: true
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Generate or refresh Android wrapper
+        run: |
+          if [ ! -d android ]; then
+            npx cap add android
+          fi
+          npx cap sync android
+
+      - name: Verify Android project
+        run: |
+          test -f android/settings.gradle || test -f android/settings.gradle.kts
+          test -f android/app/build.gradle || test -f android/app/build.gradle.kts
+          test -f android/app/src/main/AndroidManifest.xml
+          echo "Capacitor Android wrapper verified."
+
+      - name: Commit generated wrapper and lockfile
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json android
+          if git diff --cached --quiet; then
+            echo "Android wrapper already current."
+            exit 0
+          fi
+          git commit -m "Build Capacitor Android wrapper"
+          git push origin HEAD:main
