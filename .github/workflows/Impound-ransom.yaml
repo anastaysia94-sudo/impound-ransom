@@ -2,6 +2,11 @@ name: Extract impound-ransom.zip
 
 on:
   workflow_dispatch: {}
+  push:
+    branches: [ main ]
+    paths:
+      - 'impound-ransom.zip'
+      - '.github/workflows/Impound-ransom.yaml'
 
 jobs:
   extract:
@@ -31,20 +36,21 @@ jobs:
 
       - name: Move files to repository root (strip top-level folder)
         run: |
-          # If the zip contains impound-ransom/ as the top-level directory, copy its contents to repo root
           if [ -d extracted/impound-ransom ]; then
-            rsync -a extracted/impound-ransom/ .
+            rsync -a extracted/impound-ransom/ ./
           else
-            # Otherwise, copy everything from extracted/ into the repo root
             rsync -a extracted/ ./
           fi
+          rm -rf extracted
 
-      - name: Commit & push extracted files
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Commit and push extracted files
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
-          git commit -m "Extract impound-ransom.zip to repo root (automated)" || echo "No changes to commit"
-          git push origin HEAD
+          if git diff --cached --quiet; then
+            echo "Archive is already fully extracted."
+            exit 0
+          fi
+          git commit -m "Extract impound-ransom.zip to repo root (automated)"
+          git push origin HEAD:main
