@@ -1,8 +1,7 @@
 {
   "appId": "app.impoundransom.mobile",
   "appName": "Impound Ransom",
-  "webDir": ".",
-  "bundledWebRuntime": false,
+  "webDir": "www",
   "server": {
     "androidScheme": "https"
   },
