@@ -6,7 +6,9 @@ on:
     branches: [ main ]
     paths:
       - 'package.json'
+      - 'package-lock.json'
       - 'capacitor.config.json'
+      - 'scripts/prepare-mobile-web.sh'
       - '.github/workflows/android-wrapper.yml'
 
 jobs:
@@ -25,12 +27,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: npm
-          cache-dependency-path: package-lock.json
-        continue-on-error: true
 
       - name: Install dependencies
         run: npm install --no-audit --no-fund
+
+      - name: Prepare mobile web bundle
+        run: bash scripts/prepare-mobile-web.sh
 
       - name: Generate or refresh Android wrapper
         run: |
@@ -44,6 +46,7 @@ jobs:
           test -f android/settings.gradle || test -f android/settings.gradle.kts
           test -f android/app/build.gradle || test -f android/app/build.gradle.kts
           test -f android/app/src/main/AndroidManifest.xml
+          test -f android/app/src/main/assets/public/index.html
           echo "Capacitor Android wrapper verified."
 
       - name: Commit generated wrapper and lockfile
