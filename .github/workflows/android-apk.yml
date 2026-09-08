@@ -7,7 +7,14 @@ on:
     paths:
       - 'android/**'
       - 'www/**'
+      - 'index.html'
+      - 'css/**'
+      - 'js/**'
+      - 'icons/**'
+      - 'package.json'
+      - 'package-lock.json'
       - 'capacitor.config.json'
+      - 'scripts/prepare-mobile-web.sh'
       - '.github/workflows/android-apk.yml'
 
 permissions:
@@ -19,8 +26,21 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Prepare and sync Capacitor Android assets
+        run: |
+          bash scripts/prepare-mobile-web.sh
+          npx cap sync android
+          test -f android/capacitor-cordova-android-plugins/cordova.variables.gradle
+          test -f android/app/src/main/assets/public/index.html
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
